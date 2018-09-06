@@ -1,0 +1,47 @@
+#pragma once
+#include <dynalizer/dynalizer.hpp>
+#include <$HEADER>
+#include <stdexcept>
+
+#define $UCLASS_WRAP_FUNCTION(Fun, PrettyFun)                    \
+public:                                                          \
+template<typename... Args>                                       \
+auto PrettyFun(Args&&... args) -> decltype(auto)                 \
+{                                                                \
+  if(m_sym_ ## Fun)                                              \
+  {                                                              \
+    return m_sym_ ## Fun(std::forward<Args>(args)...);           \
+  }                                                              \
+  else                                                           \
+  {                                                              \
+    m_sym_ ## Fun = m_lib.symbol<decltype(::Fun)*>(# Fun);       \
+    if(m_sym_ ## Fun)                                            \
+    {                                                            \
+      return m_sym_ ## Fun(std::forward<Args>(args)...);         \
+    }                                                            \
+    else                                                         \
+    {                                                            \
+      throw std::runtime_error("Invalid symbol lookup: Fun");    \
+    }                                                            \
+  }                                                              \
+}                                                                \
+private:                                                         \
+  decltype(::Fun)* m_sym_ ## Fun{}; 
+
+
+class $CLASS
+{
+public:
+  explicit $CLASS(const char* filepath)
+    : m_lib{filepath}
+  {
+    
+  }
+
+$FUNCTIONS
+
+private:
+  dynalizer::library m_lib;
+};
+
+#undef $UCLASS_WRAP_FUNCTION

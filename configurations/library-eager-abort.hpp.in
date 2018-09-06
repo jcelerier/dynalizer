@@ -1,0 +1,37 @@
+#pragma once
+#include <dynalizer/dynalizer.hpp>
+#include <$HEADER>
+
+#define $UCLASS_WRAP_INIT(Fun)                                   \
+m_sym_ ## Fun = m_lib.symbol<decltype(::Fun)*>(# Fun);           \
+assert(m_sym_ ## Fun); 
+
+#define $UCLASS_WRAP_FUNCTION(Fun, PrettyFun)                    \
+public:                                                          \
+template<typename... Args>                                       \
+auto PrettyFun(Args&&... args) -> decltype(auto)                 \
+{                                                                \
+  return m_sym_ ## Fun(std::forward<Args>(args)...);             \
+}                                                                \
+private:                                                         \
+  decltype(::Fun)* m_sym_ ## Fun{};
+
+
+class $CLASS
+{
+public:
+  explicit $CLASS(const char* filepath)
+    : m_lib{filepath}
+  {
+  
+$INIT
+  }
+
+$FUNCTIONS
+
+private:
+  dynalizer::library m_lib;
+};
+
+#undef $UCLASS_WRAP_FUNCTION
+#undef $UCLASS_WRAP_INIT
