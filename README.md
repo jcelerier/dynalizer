@@ -34,6 +34,11 @@ public:
       throw std::runtime_error("Invalid symbol lookup: mylib_bar");
   }
 
+  static auto& instance() {
+    static mylib c;
+    return c;
+  }
+  
   template<typename... Args>
   auto mylib_foo(Args&&... args) -> decltype(auto)
   {
