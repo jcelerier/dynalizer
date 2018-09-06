@@ -49,7 +49,7 @@ def eager(hpp, file, functions):
 
     with open(hpp, 'r') as f:
         output_file = f.read()
-        output_file = output_file.replace('$HEADER', 'portaudio.h')
+        output_file = output_file.replace('$HEADER', header)
         output_file = output_file.replace('$CLASS', name)
         output_file = output_file.replace('$UCLASS', name.upper())
         output_file = output_file.replace('$INIT', init)
@@ -64,7 +64,7 @@ def lazy(hpp, file, functions):
 
     with open(hpp, 'r') as f:
         output_file = f.read()
-        output_file = output_file.replace('$HEADER', 'portaudio.h')
+        output_file = output_file.replace('$HEADER', header)
         output_file = output_file.replace('$CLASS', name)
         output_file = output_file.replace('$UCLASS', name.upper())
         output_file = output_file.replace('$FUNCTIONS', output)
@@ -89,6 +89,7 @@ def lazy_abort(file, functions):
 parser = argparse.ArgumentParser(description='Generate a dynamic loader class for a C API.')
 parser.add_argument('file', type=str, help='C header to parse')
 parser.add_argument('name', type=str, nargs='?', help='Name to give to the class')
+parser.add_argument('include', type=str, nargs='?', help='Header to include')
 parser.add_argument('--pretty', action='store_const', const=True, default=False, help='Prettify')
 
 eagerness = parser.add_mutually_exclusive_group()
@@ -107,6 +108,15 @@ name = args.name
 if name == None:
     name = os.path.splitext(os.path.basename(args.file))[0]
 
+header = args.include
+if header == None:
+    include_idx = args.file.find("include/")
+    if include_idx != -1:
+        header = args.file[include_idx + 8:]
+    else:
+        header = os.path.basename(args.file)
+    
+    
 try:
     with open(filename, 'r') as content_file:
         source_file = content_file.read()
