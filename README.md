@@ -80,13 +80,13 @@ Multiple codegen aspects can be changed:
 template<typename... Args>
 auto foo(Args&&... args) -> decltype(auto)
 {
-return m_sym_mylib_foo(std::forward<Args>(args)...);
+  return m_sym_mylib_foo(std::forward<Args>(args)...);
 }
 
 template<typename... Args>
 auto bar(Args&&... args) -> decltype(auto)
 {
-return m_sym_mylib_bar(std::forward<Args>(args)...);
+  return m_sym_mylib_bar(std::forward<Args>(args)...);
 }
 ```
 
