@@ -26,6 +26,11 @@ public:
   
 $INIT
   }
+  
+  static auto& instance() {
+    static $CLASS c;
+    return c;
+  }
 
 $FUNCTIONS
 
